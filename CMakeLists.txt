@@ -32,8 +32,8 @@ if(HAVE_M_LIB)
 endif(HAVE_M_LIB)
 
 # Thrift CPP library.
-add_library(thrift STATIC IMPORTED)
-set_target_properties(thrift PROPERTIES IMPORTED_LOCATION $ENV{CONDA_PREFIX}/lib/libthrift.a)
+add_library(thrift SHARED IMPORTED)
+set_target_properties(thrift PROPERTIES IMPORTED_LOCATION $ENV{CONDA_PREFIX}/lib/libthrift.${CMAKE_SHARED_LIBRARY_SUFFIX})
 set_target_properties(thrift PROPERTIES INTERFACE_LINK_LIBRARIES Boost::program_options)
 set_target_properties(thrift PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${Boost_INCLUDE_DIRS};$ENV{CONDA_PREFIX}/include")
 
