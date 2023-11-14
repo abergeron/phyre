@@ -15,7 +15,7 @@
 # Docker file to build phyre on a clean conda.
 # Usage:
 # docker build -t phyre -f Dockerfile ./ && docker run -i -t -p 30303:30303 phyre
-FROM ubuntu:bionic-20190612
+FROM ubuntu:22.04
 
 ENV PATH /opt/conda/bin:$PATH
 ENV PATH /opt/conda/envs/phyre/bin:$PATH
@@ -26,13 +26,11 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get install build-essential wget git --yes && apt-get clean
 
 # Installing conda.
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.7.10-Linux-x86_64.sh -O ~/anaconda.sh && \
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_23.9.0-0-Linux-x86_64.sh -O ~/anaconda.sh && \
     mkdir ~/.conda && \
     /bin/bash ~/anaconda.sh -b -p /opt/conda && \
     rm ~/anaconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc && \
+    conda init bash && \
     find /opt/conda/ -follow -type f -name '*.a' -delete && \
     find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
     /opt/conda/bin/conda clean -afy
@@ -44,11 +42,11 @@ ADD / /phyre
 WORKDIR /phyre
 
 # Installing conda.
-RUN conda env create -f env.yml && conda init bash
+RUN conda env create -f env.yml && conda clean -afy
 
 # Installing the package
-RUN apt-get update && apt-get install git --yes && apt-get clean
-RUN . /opt/conda/etc/profile.d/conda.sh && conda activate phyre && pip install -e src/python
+RUN apt-get update && apt-get install git --yes && apt-get clean -y
+RUN . /opt/conda/etc/profile.d/conda.sh && conda activate phyre && pip install -e src/python && pip cache purge
 
 # Run test.
 RUN make test
