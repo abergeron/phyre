@@ -318,18 +318,23 @@ def train(output_dir,
         eval_batch_size = train_batch_size * 4
         stats = {}
         stats['batch_id'] = batch_id + 1
+        logging.info('Here we go loss eval')
         stats['train_loss'] = eval_loss(model, eval_train, eval_batch_size)
+        logging.info('done eval loss eval contd 2')
         if eval_dev:
             stats['dev_loss'] = eval_loss(model, eval_dev, eval_batch_size)
+            logging.info('Start eval contd 3')
         if num_auccess_actions > 0:
             logging.info('Start AUCCESS eval')
             stats['train_auccess'] = _eval_and_score_actions(
                 cache, model, eval_train[3], num_auccess_actions,
                 eval_batch_size, eval_train[4])
+            logging.info('Start eval contd 4')
             if eval_dev:
                 stats['dev_auccess'] = _eval_and_score_actions(
                     cache, model, eval_dev[3], num_auccess_actions,
                     eval_batch_size, eval_dev[4])
+                logging.info('Start eval contd 4')
 
         logging.info('__log__: %s', stats)
 
@@ -400,6 +405,7 @@ def eval_loss(model, data, batch_size):
     with torch.no_grad():
         model.eval()
         for i in range(0, len(task_indices), batch_size):
+            logging.info("index {} / {}".format(i, len(task_indices)))
             batch_task_indices = task_indices[i:i + batch_size]
             batch_observations = observations[batch_task_indices]
             batch_actions = actions[i:i + batch_size]
@@ -434,6 +440,7 @@ def _eval_and_score_actions(cache, model, simulator, num_actions, batch_size,
     evaluator = phyre.Evaluator(
         [simulator.task_ids[index] for index in indices])
     for i, task_index in enumerate(indices):
+        logging.info("eval_and_score index: {}".format(i))
         scores = eval_actions(model, actions, batch_size,
                               observations[task_index]).tolist()
 
