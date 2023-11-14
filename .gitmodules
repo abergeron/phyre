@@ -1,6 +1,6 @@
 [submodule "third-party/Box2D"]
 	path = third-party/Box2D
-	url = https://github.com/erincatto/Box2D.git
+	url = https://github.com/abergeron/box2d.git
 [submodule "third-party/clip2tri"]
 	path = third-party/clip2tri
 	url = https://github.com/raptor/clip2tri.git
